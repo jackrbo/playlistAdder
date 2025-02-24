@@ -1,0 +1,9 @@
+I am lazy, I am impatient. I don't want to wait for other people to add to their spotify playlist because they are too slow.
+The playlist_creator.py script will work as long as the format of the youtube descriptions remains the same. If it starts to fail take a look at that first.
+
+Run this to add to https://open.spotify.com/playlist/1QSEijoUdMQNS6zDmiAp2e?si=8b63eca17f4a446e
+pushd ~/repos/spotifyPlaylist
+. .pyvenv/bin/activate
+python playlist_creator.py
+deactivate
+popd
