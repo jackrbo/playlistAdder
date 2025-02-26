@@ -5,13 +5,12 @@ from spotipy.oauth2 import SpotifyOAuth
 from googleapiclient.discovery import build
 import keyring
 
-# Set up YouTube API
+# Set up Youtube API
 YOUTUBE_API_KEY = keyring.get_password("youtubeToken", "add_to_playlist")
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 
-
 def get_video_id(url):
-    """Define a regular expression pattern to capture YouTube video IDs from various URL formats"""
+    """Get the video ID for given url"""
     patterns = [
         r"(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]+)",
         r"(?:https?://)?(?:www\.)?youtube\.com/v/([a-zA-Z0-9_-]+)",
@@ -23,7 +22,7 @@ def get_video_id(url):
     return None  # Return None if no match is found
 
 def get_latest_video(channel_id):
-    """Get the uploads playlist ID for the channel"""
+    """Get latest uploaded video from channel given the channel ID"""
     channels_response = youtube.channels().list(
         part='contentDetails',
         id=channel_id
@@ -42,9 +41,8 @@ def get_latest_video(channel_id):
 
 USERNAME_OR_HANDLE = 'theneedledrop'
 
-
 def get_channel_id(username_or_handle):
-    """Search for channel id"""
+    """Search for channel ID given the username"""
     response = youtube.search().list(
         part='snippet',
         q=username_or_handle,
@@ -101,7 +99,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                                redirect_uri=SPOTIPY_REDIRECT_URI,
                                                scope=SCOPE))
 
-# 5. Search for Songs on Spotify
+# 3. Search for songs on Spotify
 track_uris = []
 for song in parsed_songs:
     artist = re.sub(r" ft\..*$", "", song['artist'])
@@ -116,14 +114,13 @@ for song in parsed_songs:
         print(query)
         print(f"Couldn't find '{song['artist']}' '{song['title']}'")
 
-# 6. Create a New Playlist
+# 4. Get info for spotify user and playlist ID
 user_id = sp.current_user()["id"]
 playlist_id = keyring.get_password("playlist_id", "add_to_playlist")
-PLAYLIST_NAME = "The Needle Drop 2025 - Best tracks of the week"
 
-# 7. Add Tracks to Playlist
+# 5. Add tracks to playlist
 print(track_uris)
 for track in track_uris:
     sp.playlist_add_items(playlist_id, [track])
 
-print(f"Playlist '{PLAYLIST_NAME}' created with {len(track_uris)} tracks!")
+print(f"Added {len(track_uris)} tracks to playlist The Needle Drop 2025 - Best tracks of the week")
