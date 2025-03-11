@@ -9,6 +9,9 @@ import keyring
 YOUTUBE_API_KEY = keyring.get_password("youtubeToken", "add_to_playlist")
 youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 
+
+print('Using video_url:', sys.argv[1])
+
 def get_video_id(url):
     """Get the video ID for given url"""
     patterns = [
@@ -61,11 +64,18 @@ if CHANNEL_ID:
 else:
     print("Channel not found.")
 
-VIDEO_URL, VIDEO_TITLE = get_latest_video(CHANNEL_ID)
-print(f"Latest video URL: {VIDEO_URL}")
-print(f"Video Title: {VIDEO_TITLE}")
+if sys.argv[1] == "":
+    VIDEO_URL, VIDEO_TITLE = get_latest_video(CHANNEL_ID)
+    print(f"Latest video URL: {VIDEO_URL}")
+    print(f"Video Title: {VIDEO_TITLE}")
+else:
+    VIDEO_URL = sys.argv[1]
 
 VIDEO_ID = get_video_id(VIDEO_URL)
+print(VIDEO_ID)
+if VIDEO_ID == None:
+    print(f"Failed to get video id are you sure {VIDEO_URL} is a correct url")
+    sys.exit(1)
 
 # Fetch comments
 request = youtube.videos().list(part="snippet", id=VIDEO_ID)
